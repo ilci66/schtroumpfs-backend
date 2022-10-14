@@ -106,18 +106,24 @@ router.get('/amis', (req, res) => {
     })
 })
 
-router.post('/enlever-ami', (req, res) => {
-    const {nom, nomAmi} = req.body
-    Schtroumpfs.find({ nom }, async (err, data) => {
+// router.post('/enlever-ami', (req, res) => {
+router.delete('/enlever-ami/:nom', (req, res) => {
+    console.log(req.params.nom)
+    // const {nom } = req.body
+    const {nom} = req.params
+    const decoded = verifyUser(req, res);
+    console.log("decoded", decoded)
+
+    Schtroumpfs.findOne({ _id: decoded.sub }, async (err, data) => {
         if(err) {
             console.error("err in adding", err)
             return res.status(400)
         } else {
             console.log("data => ",data)
-            if(data[0].friends.indexOf(nomAmi) < 0) {
+            if(data.friends.indexOf(nom) < 0) {
                 console.log("not in list", err)
             } else {
-                result = await Schtroumpfs.findOneAndUpdate({ nom: nom }, { friends: data[0].friends.filter(f => f != nomAmi) }, { new: true })
+                result = await Schtroumpfs.findOneAndUpdate({ _id: decoded.sub }, { friends: data.friends.filter(f => f != nom) }, { new: true })
                 return res.status(200).json({friends: result.friends})
             }
 

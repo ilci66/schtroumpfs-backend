@@ -1,22 +1,22 @@
 const express = require ('express');
 require('dotenv').config();
 const mongoose = require('mongoose');
-const routes = require('./routes/index.js')
+const userRoutes = require('./routes/user/index');
+const genericRoutes = require('./routes/generic/index');
+const amiRoutes = require('./routes/ami/index');
 const cors = require('cors');
 var bodyParser = require('body-parser')
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }))
-
-// parse application/json
 app.use(bodyParser.json())
 
 app.use(cors());
-// app.use(express.json())
-// app.use(express.urlencoded({"extended":true}))git pull
 
-app.use('/', routes);
+app.use('/user', userRoutes);
+app.use('/ami', amiRoutes);
+app.use('/', genericRoutes);
 
 const port = process.env.PORT || 5000;
 
